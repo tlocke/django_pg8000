@@ -1,0 +1,80 @@
+[build-system]
+requires = [
+    "hatchling",
+    "versioningit",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "django_pg8000"
+description = "A Django database backend for pg8000"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["django", "postgresql", "pg8000"]
+license = {text = "MIT No Attribution"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT No Attribution License (MIT-0)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "django",
+    "pytz",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/tlocke/django_pg8000"
+
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit]
+
+[tool.versioningit.vcs]
+method = "git"
+default-tag = "0.0.0"
+
+[tool.flake8]
+application-names = ["django_pg8000"]
+ignore = ["E203", "W503"]
+max-line-length = 88
+exclude = [".git", "__pycache__", "build", "dist", "venv", ".tox"]
+application-import-names = ["django_pg8000"]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py
+
+[testenv]
+allowlist_externals=/usr/bin/rm
+commands =
+    black --check .
+    flake8 .
+    pytest -v -x -W error test
+    rm -rf dist
+    python -m build
+    twine check dist/*
+deps =
+    build
+    pytest
+    pytest-mock
+    black
+    flake8
+    Flake8-pyproject
+    flake8-alphabetize
+    passlib
+    twine
+"""
