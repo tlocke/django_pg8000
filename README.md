@@ -91,6 +91,10 @@ Run ``tox`` to make sure all tests pass, then update the release notes, then do:
 
 # Release Notes
 
+## Version 0.0.2
+
+* Add GitHub Actions tests
+
 ## Version 0.0.1
 
 * Initial release.
