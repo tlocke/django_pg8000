@@ -1,0 +1,78 @@
+name: django_pg8000
+
+on: [push]
+
+permissions: read-all
+
+jobs:
+  main-test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        postgresql-version: [14]
+
+    container:
+      image: python:${{ matrix.python-version }}
+      env:
+        PGHOST: postgres
+        PGPASSWORD: postgres
+        PGUSER: postgres
+
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgresql-version }}
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: django_pg8000
+      - name: Install dependencies
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python -m pip install --no-cache-dir --upgrade pip
+          pip install --no-cache-dir --root-user-action ignore django_pg8000/.
+
+      - name: Set up Postgresql
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends postgresql-client
+          psql -c "CREATE EXTENSION hstore;"
+          psql -c "SELECT pg_reload_conf()"
+
+      - name: Clone django repository
+        uses: actions/checkout@v2
+        with:
+          repository: django/django
+          path: django
+      - name: Create config file
+        run: |
+          pwd
+          cp django_pg8000/tests/test_pg8000.py django/django/conf
+      - name: locations
+        run: |
+          pwd
+          ls
+          ls ..
+          ls ../..
+      - name: django locations
+        run: |
+          ls django
+          echo 'bla'
+          ls django/tests
+      - name: Check config file
+        run: |
+          pip install -e django
+          pip install -r django/tests/requirements/py3.txt
+      - name: Run tests
+        run: |
+          django/tests/runtests.py --failfast --parallel=1 --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000

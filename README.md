@@ -28,7 +28,7 @@ send a Pull Request that fixes a particular test.
 
 # Testing
 
-* Git clone Django
+* `git clone https://github.com/django/django.git`
 * `cd tests`
 * `python -m pip install -e ..`
 * `python -m pip install -r requirements/py3.txt`

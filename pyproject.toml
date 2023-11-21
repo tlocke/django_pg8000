@@ -30,6 +30,8 @@ classifiers = [
 dependencies = [
     "django",
     "pytz",
+    "pg8000",
+    "python-dateutil",
 ]
 dynamic = ["version"]
 
