@@ -71,23 +71,22 @@ Create a file at `django/django/conf/test_pg8000.py`:
 
     USE_TZ = False
 
-Then run `./runtests.py --failfast --parallel=1 --exclude-tag=psycopg\_specific --settings=django.conf.test\_pg8000`
+Then run `./runtests.py --failfast --parallel=1 --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000`
 
 Some tests in the Django suite are specific to the pyscopg driver, so these can be marked with the
 `psycopg_specific`
 [tag](https://docs.djangoproject.com/en/4.2/topics/testing/tools/#topics-tagging-tests).
 
 If tests fail then you may need to drop the databases that are left hanging around by doing something
-like:
-    psql --username=postgres -c "DROP DATABASE IF EXISTS test_django;" -c "DROP DATABASE IF EXISTS test_django_other;"
+like: `psql --username=postgres -c "DROP DATABASE IF EXISTS test_django;" -c "DROP DATABASE IF EXISTS test_django_other;"`
 
 
 # Doing A Release Of Django pg8000
 
-* git tag -a x.y.z -m "version x.y.z"
-* rm -r dist
-* python -m build
-* twine upload dist/*
+* `git tag -a x.y.z -m "version x.y.z"`
+* `rm -r dist`
+* `python -m build`
+* `twine upload dist/*`
 
 
 # Release Notes
