@@ -51,32 +51,5 @@ default-tag = "0.0.0"
 application-names = ["django_pg8000"]
 ignore = ["E203", "W503"]
 max-line-length = 88
-exclude = [".git", "__pycache__", "build", "dist", "venv", ".tox"]
+exclude = [".git", "__pycache__", "build", "dist", "venv"]
 application-import-names = ["django_pg8000"]
-
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-isolated_build = True
-envlist = py
-
-[testenv]
-allowlist_externals=/usr/bin/rm
-commands =
-    black --check .
-    flake8 .
-    pytest -v -x -W error test
-    rm -rf dist
-    python -m build
-    twine check dist/*
-deps =
-    build
-    pytest
-    pytest-mock
-    black
-    flake8
-    Flake8-pyproject
-    flake8-alphabetize
-    passlib
-    twine
-"""

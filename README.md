@@ -1,6 +1,9 @@
 # Django pg8000
 
-A Django database backend for pg8000
+A [Django](https://pypi.org/project/Django/) database backend for the
+[pg8000](https://pypi.org/project/pg8000/) driver for PostgreSQL.
+
+[![Workflow Status Badge](https://github.com/tlocke/django_pg8000/workflows/django_pg8000/badge.svg)](https://github.com/tlocke/django_pg8000/actions)
 
 # Installation And Usage
 
@@ -80,8 +83,6 @@ like:
 
 
 # Doing A Release Of Django pg8000
-
-Run ``tox`` to make sure all tests pass, then update the release notes, then do:
 
 * git tag -a x.y.z -m "version x.y.z"
 * rm -r dist

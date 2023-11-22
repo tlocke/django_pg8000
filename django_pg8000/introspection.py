@@ -1,8 +1,10 @@
 from collections import namedtuple
 
-from django.db.backends.base.introspection import BaseDatabaseIntrospection
-from django.db.backends.base.introspection import FieldInfo as BaseFieldInfo
-from django.db.backends.base.introspection import TableInfo as BaseTableInfo
+from django.db.backends.base.introspection import (
+    BaseDatabaseIntrospection,
+    FieldInfo as BaseFieldInfo,
+    TableInfo as BaseTableInfo,
+)
 from django.db.models import Index
 
 FieldInfo = namedtuple("FieldInfo", BaseFieldInfo._fields + ("is_autofield", "comment"))
@@ -276,12 +278,10 @@ class DatabaseIntrospection(BaseDatabaseIntrospection):
             options,
         ) in cursor.fetchall():
             if index not in constraints:
+                # '_btree' references django.contrib.postgres.indexes.BTreeIndex.suffix.
                 basic_index = (
                     type_ == self.index_default_access_method
-                    and
-                    # '_btree' references
-                    # django.contrib.postgres.indexes.BTreeIndex.suffix.
-                    not index.endswith("_btree")
+                    and not index.endswith("_btree")
                     and options is None
                 )
                 constraints[index] = {

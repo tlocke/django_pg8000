@@ -33,7 +33,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: django_pg8000
       - name: Install dependencies
@@ -50,29 +50,41 @@ jobs:
           psql -c "SELECT pg_reload_conf()"
 
       - name: Clone django repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: django/django
           path: django
       - name: Create config file
         run: |
-          pwd
           cp django_pg8000/tests/test_pg8000.py django/django/conf
-      - name: locations
-        run: |
-          pwd
-          ls
-          ls ..
-          ls ../..
-      - name: django locations
-        run: |
-          ls django
-          echo 'bla'
-          ls django/tests
-      - name: Check config file
+      - name: Install dependencies
         run: |
           pip install -e django
           pip install -r django/tests/requirements/py3.txt
-      - name: Run tests
+      - name: Run minimal tests
         run: |
-          django/tests/runtests.py --failfast --parallel=1 --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000
+          django/tests/runtests.py --failfast --parallel=1 --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000 absolute_url_overrides
+
+  static-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black build flake8 pytest flake8-alphabetize Flake8-pyproject \
+            twine .
+      - name: Lint check
+        run: |
+          black --check .
+          flake8 .
+      - name: Check Distribution
+        run: |
+          python -m build
+          twine check dist/*
