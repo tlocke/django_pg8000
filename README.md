@@ -91,6 +91,12 @@ like: `psql --username=postgres -c "DROP DATABASE IF EXISTS test_django;" -c "DR
 
 # Release Notes
 
+## Version 0.0.3
+
+* Rather than using the vendor 'postgresql', use 'postgresql\_pg8000'. Otherwise Django assumes
+  that psycopg is installed.
+
+
 ## Version 0.0.2
 
 * Add GitHub Actions tests
