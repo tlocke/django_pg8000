@@ -52,7 +52,7 @@ jobs:
       - name: Clone django repository
         uses: actions/checkout@v4
         with:
-          repository: django/django
+          repository: tlocke/django
           path: django
       - name: Create config file
         run: |
@@ -61,9 +61,9 @@ jobs:
         run: |
           pip install -e django
           pip install -r django/tests/requirements/py3.txt
-      - name: Run minimal tests
+      - name: Run tests
         run: |
-          django/tests/runtests.py --failfast --parallel=1 --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000 absolute_url_overrides
+          django/tests/runtests.py --failfast --exclude-tag=psycopg_specific --settings=django.conf.test_pg8000
 
   static-test:
     runs-on: ubuntu-latest

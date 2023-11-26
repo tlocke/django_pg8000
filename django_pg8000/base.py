@@ -465,7 +465,7 @@ class ServerSideCursor:
 
 
 class DatabaseWrapper(BaseDatabaseWrapper):
-    vendor = "postgresql"
+    vendor = "postgresql_pg8000"
     display_name = "PostgreSQL"
     # This dictionary maps Field objects to their associated PostgreSQL column
     # types, as strings. Column-type strings can contain format strings; they'll

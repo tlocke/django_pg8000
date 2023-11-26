@@ -27,6 +27,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     can_rollback_ddl = True
     schema_editor_uses_clientside_param_binding = False
     supports_combined_alters = True
+    supports_non_deterministic_collations = False
     nulls_order_largest = True
     closed_cursor_error_class = InterfaceError
     greatest_least_ignores_nulls = True
@@ -63,6 +64,8 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_aggregate_filter_clause = True
     supported_explain_formats = {"JSON", "TEXT", "XML", "YAML"}
     supports_deferrable_unique_constraints = True
+    supports_json_field = False
+    has_json_object_function = False
     has_json_operators = True
     json_key_contains_list_matching_requires_list = True
     supports_update_conflicts = False
@@ -70,8 +73,10 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_covering_indexes = True
     can_rename_index = True
     test_collations = {
+        "deterministic": "C",
         "non_default": "sv-x-icu",
         "swedish_ci": "sv-x-icu",
+        "virtual": "sv-x-icu",
     }
     test_now_utc_template = "STATEMENT_TIMESTAMP() AT TIME ZONE 'UTC'"
     insert_test_table_with_defaults = "INSERT INTO {} DEFAULT VALUES"
