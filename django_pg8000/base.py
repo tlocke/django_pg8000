@@ -173,15 +173,6 @@ class DatabaseConnection:
 
         c = Connection(**conn_params)
 
-        timestamptz_in = (
-            timestamptz_in_use_tz if settings.USE_TZ else timestamptz_in_no_tz
-        )
-
-        c.register_in_adapter(TIMESTAMPTZ, timestamptz_in)
-
-        timestamptz_array_in = _array_in(timestamptz_in)
-        c.register_in_adapter(TIMESTAMPTZ_ARRAY, timestamptz_array_in)
-
         c.register_in_adapter(JSON, string_in)
         c.register_in_adapter(JSON_ARRAY, string_array_in)
         c.register_in_adapter(JSONB, string_in)
@@ -620,14 +611,24 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         if settings.USE_TZ:
             tzname = timezone_name
+            timestamptz_in = timestamptz_in_use_tz
         else:
             tzname = "UTC"
+            timestamptz_in = timestamptz_in_no_tz
+
+        self.connection._con.register_in_adapter(TIMESTAMPTZ, timestamptz_in)
+
+        timestamptz_array_in = _array_in(timestamptz_in)
+        self.connection._con.register_in_adapter(
+            TIMESTAMPTZ_ARRAY, timestamptz_array_in
+        )
 
         if tzname and conn_timezone_name != tzname:
             self.connection._con.run(
                 f"SET TIMEZONE TO {DatabaseOperations._literal(tzname)}"
             )
             return True
+
         return False
 
     def ensure_role(self):
