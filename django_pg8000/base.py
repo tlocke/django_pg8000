@@ -615,9 +615,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     def ensure_timezone(self):
         if self.connection is None:
             return False
-
         conn_timezone_name = self.connection.info.get_parameter_status("TimeZone")
-        timezone_name = self.timezone_name  # Also needed for tests
+        timezone_name = settings.TIME_ZONE
 
         if settings.USE_TZ:
             tzname = timezone_name
