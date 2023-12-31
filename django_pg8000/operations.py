@@ -164,16 +164,14 @@ class DatabaseOperations(BaseDatabaseOperations):
 
     @staticmethod
     def _compose_sql(sql, params, connection=None):
-        if params is None or len(params) == 0:
-            return sql
-        args = list(params)
+        args = [] if params is None else list(params)
         prev_c = None
         new_sql = []
         for c in sql:
             if c == "%" and prev_c == "%":
                 prev_c = None
 
-            elif prev_c == "%" and c == "s":
+            elif prev_c == "%" and c == "s" and len(args) > 0:
                 new_sql.pop()
                 param = args.pop(0)
                 for pc in DatabaseOperations._literal(param, connection=connection):
