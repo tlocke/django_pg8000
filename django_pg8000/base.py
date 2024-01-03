@@ -30,15 +30,17 @@ from pg8000.converters import (
     DATERANGE,
     INET_ARRAY,
     INT4RANGE,
+    INT4RANGE_ARRAY,
     INT8RANGE,
     JSONB_ARRAY,
     JSON_ARRAY,
     NUMRANGE,
     TIMESTAMPTZ_ARRAY,
-    _array_in,
+    int4range_array_in,
     int_in,
     string_array_in,
     string_in,
+    timestamptz_array_in,
 )
 from pg8000.core import Context, IN_FAILED_TRANSACTION, IN_TRANSACTION
 from pg8000.native import (
@@ -60,8 +62,6 @@ from django_pg8000.features import DatabaseFeatures
 from django_pg8000.introspection import DatabaseIntrospection
 from django_pg8000.operations import DatabaseOperations
 from django_pg8000.schema import DatabaseSchemaEditor
-
-ARRAY_INT4RANGE = 3905
 
 
 def _get_varchar_column(data):
@@ -139,10 +139,7 @@ class Info:
 
     @property
     def _parameter_statuses(self):
-        ps = {}
-        for k, v in self.con.parameter_statuses:
-            ps[k.decode("ascii")] = v.decode("ascii")
-        return ps
+        return self.con.parameter_statuses
 
     def get_parameter_status(self, name):
         return self._parameter_statuses.get(name)
@@ -181,7 +178,7 @@ class DatabaseConnection:
         c.register_in_adapter(INET_ARRAY, string_array_in)
         c.register_in_adapter(INT4RANGE, string_array_in)
 
-        c.register_in_adapter(ARRAY_INT4RANGE, _array_in(int4range_in))
+        c.register_in_adapter(INT4RANGE_ARRAY, int4range_array_in)
 
         c.register_in_adapter(INT8RANGE, string_array_in)
         c.register_in_adapter(DATERANGE, string_array_in)
@@ -553,10 +550,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     @cached_property
     def pg_version(self):
         with self.temporary_connection():
-            ps = {
-                k.decode("ascii"): v.decode("ascii")
-                for k, v in self.connection._con.parameter_statuses
-            }
+            ps = self.connection._con.parameter_statuses
             vers, *_ = ps["server_version"].split()
             idx = vers.index(".")
             return int(vers[:idx] + vers[idx + 1 :].zfill(4))
@@ -618,7 +612,6 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         self.connection._con.register_in_adapter(TIMESTAMPTZ, timestamptz_in)
 
-        timestamptz_array_in = _array_in(timestamptz_in)
         self.connection._con.register_in_adapter(
             TIMESTAMPTZ_ARRAY, timestamptz_array_in
         )
