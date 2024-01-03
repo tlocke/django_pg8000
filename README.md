@@ -91,6 +91,11 @@ like: `psql --username=postgres -c "DROP DATABASE IF EXISTS test_django;" -c "DR
 
 # Release Notes
 
+## Version 0.0.5
+
+* Now requires pg8000 1.30.4 or higher
+
+
 ## Version 0.0.4
 
 * Various bug fixes, so a few more tests are passed.
